@@ -85,13 +85,9 @@ describe("keylet_account.rs", () => {
       expect(accountKeyletBuffer.length).toBe(34);
 
       // It shouldn't be empty
-      const isNotUninitialized = !accountKeyletBuffer.every(
-        (byte) => byte === 0x00,
+      expect(accountKeylet.toUpperCase()).toBe(
+        "0061355E27663861169420D62A5955FECE7FB519121F8CDC15963FD1561653531F9C",
       );
-      expect(isNotUninitialized).toBe(true);
-      expect(
-        BigInt("0x" + accountKeyletBuffer.toString("hex")),
-      ).toBeGreaterThan(0n);
     },
     3 * 60_000,
   );
