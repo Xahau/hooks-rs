@@ -175,7 +175,7 @@ impl<'a> KeyletHook<'_> {
     }
 }
 
-impl<'a> KeyletPayloadBuilder for KeyletHook<'a> {
+impl KeyletPayloadBuilder for KeyletHook<'_> {
     #[inline(always)]
     fn build(&self) -> KeyletPayload {
         KeyletPayload {
@@ -198,7 +198,7 @@ impl<'a> KeyletAccount<'_> {
     }
 }
 
-impl<'a> KeyletPayloadBuilder for KeyletAccount<'a> {
+impl KeyletPayloadBuilder for KeyletAccount<'_> {
     #[inline(always)]
     fn build(&self) -> KeyletPayload {
         KeyletPayload {
