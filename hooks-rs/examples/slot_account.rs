@@ -78,7 +78,7 @@ pub extern "C" fn hook(_: u32) -> i64 {
 
     let _ = trace_float(b"mul_factor", mul_factor);
     let _ = trace_float(b"xfl_balance_0", xfl_balance_0);
-    let _ = trace_float(b"xfl_balance_1", adjusted_xfl_balance_1);
+    let _ = trace_float(b"adjusted_xfl_balance_1", adjusted_xfl_balance_1);
 
     // Assert same (equality is overloaded)
     if xfl_balance_0 != adjusted_xfl_balance_1 {

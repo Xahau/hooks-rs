@@ -185,7 +185,7 @@ Utilities
 - [ ] `util_accid`
 - [ ] `util_verify`
 - [ ] `util_sha512h`
-- [ ] `util_keylet`
+- [x] `util_keylet`
 
 Hook context
 
