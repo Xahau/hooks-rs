@@ -93,6 +93,7 @@ pub fn slot_type(slot_no: u32, flags: SlotTypeFlags) -> Result<FieldOrXrpAmount>
 }
 
 /// Parse the STI_AMOUNT in the specified slot and return it as an XFL enclosed number
+/// XAH Balance is normalized by 10^-6 (drops decimals) for some reason when using slot_float
 #[inline(always)]
 pub fn slot_float(slot_no: u32) -> Result<XFL> {
     XFL::from_verified_i64(unsafe { c::slot_float(slot_no) })

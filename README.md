@@ -217,7 +217,7 @@ Slot
 - [x] `slot_subfield`
 - [ ] `slot_type`
 - [ ] `xpop_slot`
-- [ ] `slot_float`
+- [x] `slot_float`
 
 </details>
 

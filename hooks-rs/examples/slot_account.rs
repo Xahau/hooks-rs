@@ -68,7 +68,7 @@ pub extern "C" fn hook(_: u32) -> i64 {
 
     // Another way to get the account balance
     // See https://github.com/Xahau/xahaud/blob/0b675465b4e038e6080146043ad7fb2bfaf1a53e/src/ripple/app/hook/impl/applyHook.cpp#L2790-L2797
-    // balance is normalized by 10^-6 (drops decimals) for some reason when using slot_float
+    // balance is multiplied by 10^-6 (drops decimals) again for some reason when using slot_float
     // so this should be 1000000000000000*10^(-12)
     let xfl_balance_1 = slot_float(ACCOUNT_BALANCE_SLOT_ID).unwrap_line_number();
 
