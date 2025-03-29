@@ -76,19 +76,11 @@ describe("slot_account.rs", () => {
       const [hookExecution] = meta.HookExecutions as [HookExecution];
 
       const { HookReturnString, HookReturnCode } = hookExecution.HookExecution;
-      console.log(HookReturnString);
-      expect(BigInt(HookReturnCode)).toBe(0n);
-
-      const accountKeylet = HookReturnString;
-      // Keylet is always serialized to 34 bytes
-      const accountKeyletBuffer = Buffer.from(accountKeylet, `hex`);
-      expect(accountKeyletBuffer.length).toBe(34);
-
-      // Check at https://richardah.github.io/xrpl-keylet-tools/
-      // by inserting r3zEReqN3Ge3g1GXUThuVSrn4dM8xpoA7i
-      expect(accountKeylet.toUpperCase()).toBe(
-        "0061355E27663861169420D62A5955FECE7FB519121F8CDC15963FD1561653531F9C",
+      expect(Buffer.from(HookReturnString, "hex").toString()).toBe(
+        "passing",
       );
+      // Account has 1000000000 drops of XAH
+      expect(BigInt("0x" + HookReturnCode)).toBe(BigInt(1000000000n));
     },
     3 * 60_000,
   );

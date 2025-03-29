@@ -59,8 +59,31 @@ pub extern "C" fn hook(_: u32) -> i64 {
         }
     }
 
+    // First way to get the account balance
     slot_subfield(ACCOUNT_SLOT_ID, FieldId::Balance, ACCOUNT_BALANCE_SLOT_ID).unwrap_line_number();
-    let account_balance_slot = slot::<64>(ACCOUNT_BALANCE_SLOT_ID).unwrap_line_number();
+    let account_balance_slot = slot::<XFL_LEN>(ACCOUNT_BALANCE_SLOT_ID).unwrap_line_number();
+    // This should be 1000000000000000*10^(-6)
+    let xfl_balance_0 = XFL::from_sto(&account_balance_slot).unwrap_line_number();
+    let i64_balance_0 = xfl_balance_0.to_int64(0, false).unwrap_line_number();
 
-    accept(&account_balance_slot, 0);
+    // Another way to get the account balance
+    // See https://github.com/Xahau/xahaud/blob/0b675465b4e038e6080146043ad7fb2bfaf1a53e/src/ripple/app/hook/impl/applyHook.cpp#L2790-L2797
+    // balance is normalized by 10^-6 (drops decimals) for some reason when using slot_float
+    // so this should be 1000000000000000*10^(-12)
+    let xfl_balance_1 = slot_float(ACCOUNT_BALANCE_SLOT_ID).unwrap_line_number();
+
+    // 10 * (10^5) = 10^6
+    let mul_factor = XFL::new(5, 10).unwrap_line_number();
+    let adjusted_xfl_balance_1 = (xfl_balance_1 * mul_factor).unwrap_line_number();
+
+    let _ = trace_float(b"mul_factor", mul_factor);
+    let _ = trace_float(b"xfl_balance_0", xfl_balance_0);
+    let _ = trace_float(b"xfl_balance_1", adjusted_xfl_balance_1);
+
+    // Assert same (equality is overloaded)
+    if xfl_balance_0 != adjusted_xfl_balance_1 {
+        rollback(b"xfl_balance_0 != adjusted_xfl_balance_1", -4);
+    }
+
+    accept(b"passing", i64_balance_0);
 }

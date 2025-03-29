@@ -134,7 +134,7 @@ Float
 - [x] `float_negate`
 - [x] `float_compare`
 - [x] `float_sum`
-- [ ] `float_sto`
+- [x] `float_sto`
 - [x] `float_sto_set`
 - [x] `float_invert`
 - [x] `float_divide`
@@ -208,13 +208,13 @@ Serialization
 
 Slot
 
-- [ ] `slot`
+- [x] `slot`
 - [ ] `slot_clear`
 - [ ] `slot_count`
-- [ ] `slot_set`
+- [x] `slot_set`
 - [ ] `slot_size`
 - [ ] `slot_subarray`
-- [ ] `slot_subfield`
+- [x] `slot_subfield`
 - [ ] `slot_type`
 - [ ] `xpop_slot`
 - [ ] `slot_float`
