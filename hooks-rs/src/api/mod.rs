@@ -146,28 +146,33 @@ pub enum AmountType {
 /// Keylet type
 #[allow(missing_docs)]
 #[derive(Clone, Copy)]
-pub enum KeyletType<'a> {
-    Hook(&'a [u8]),
-    HookState(&'a [u8], &'a [u8]),
-    Account(&'a [u8]),
-    Amendments,
-    Child(&'a [u8]),
-    Skip(Option<(u32, u32)>),
-    Fees,
-    NegativeUnl,
-    Line(&'a [u8], &'a [u8], &'a [u8]),
-    Offer(&'a [u8], u32),
-    Quality(&'a [u8], u32, u32),
-    EmittedDir,
-    Signers(&'a [u8]),
-    Check(&'a [u8], u32),
-    DepositPreauth(&'a [u8], &'a [u8]),
-    Unchecked(&'a [u8]),
-    OwnerDir(&'a [u8]),
-    Page(&'a [u8], u32, u32),
-    Escrow(&'a [u8], u32),
-    Paychan(&'a [u8], &'a [u8], u32),
-    Emitted(&'a [u8]),
+#[repr(u32)]
+pub enum KeyletType {
+    Hook = c::KEYLET_HOOK,
+    HookState = c::KEYLET_HOOK_STATE,
+    Account = c::KEYLET_ACCOUNT,
+    Amendments = c::KEYLET_AMENDMENTS,
+    Child = c::KEYLET_CHILD,
+    Skip = c::KEYLET_SKIP,
+    Fees = c::KEYLET_FEES,
+    NegativeUnl = c::KEYLET_NEGATIVE_UNL,
+    Line = c::KEYLET_LINE,
+    Offer = c::KEYLET_OFFER,
+    Quality = c::KEYLET_QUALITY,
+    EmittedDir = c::KEYLET_EMITTED_DIR,
+    Signers = c::KEYLET_SIGNERS,
+    Check = c::KEYLET_CHECK,
+    DepositPreauth = c::KEYLET_DEPOSIT_PREAUTH,
+    Unchecked = c::KEYLET_UNCHECKED,
+    OwnerDir = c::KEYLET_OWNER_DIR,
+    Page = c::KEYLET_PAGE,
+    Escrow = c::KEYLET_ESCROW,
+    Paychan = c::KEYLET_PAYCHAN,
+    Emitted = c::KEYLET_EMITTED,
+    NftOffer = c::KEYLET_NFT_OFFER,
+    HookDefinition = c::KEYLET_HOOK_DEFINITION,
+    HookStateDir = c::KEYLET_HOOK_STATE_DIR,
+    UriToken = c::KEYLET_URITOKEN,
 }
 
 /// Field or amount type
@@ -590,6 +595,9 @@ pub enum Error {
     NotAnAmount = -32,
     /// An API would have returned a negative integer except that negative integers are reserved for error codes (i.e. what you are reading.)
     CantReturnNegative = -33,
+
+    // Custom errors from hooks-rs
+    InvalidKeyletLength = -500,
 }
 
 impl Error {
@@ -686,5 +694,12 @@ impl From<TxnType> for u8 {
     #[inline(always)]
     fn from(transaction_type: TxnType) -> Self {
         transaction_type as _
+    }
+}
+
+impl From<KeyletType> for u32 {
+    #[inline(always)]
+    fn from(keylet_type: KeyletType) -> Self {
+        keylet_type as _
     }
 }

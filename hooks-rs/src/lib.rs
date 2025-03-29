@@ -21,6 +21,8 @@
 )]
 #![doc(test(attr(deny(warnings))))]
 #![feature(maybe_uninit_uninit_array, maybe_uninit_array_assume_init)]
+pub mod custom_errors;
+
 /// Internal C bindings. Unless if you are creating something very low-level,
 /// you should not need to use this module directly.
 #[allow(missing_docs)]

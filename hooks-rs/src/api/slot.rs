@@ -6,31 +6,41 @@ use super::*;
 /// Serialize and output a slotted object
 #[inline(always)]
 pub fn slot(slotted_obj: &mut [u8], slot_no: u32) -> Result<u64> {
-    buf_write_1arg(slotted_obj, slot_no, c::slot)
+    let res = unsafe {
+        c::slot(
+            slotted_obj.as_mut_ptr() as u32,
+            slotted_obj.len() as u32,
+            slot_no,
+        )
+    };
+
+    res.into()
 }
 
 /// Free up a currently occupied slot
 #[inline(always)]
 pub fn slot_clear(slot_no: u32) -> Result<u64> {
-    api_1arg_call(slot_no, c::slot_clear)
+    unsafe { c::slot_clear(slot_no) }.into()
 }
 
 /// Count the elements of an array object in a slot
 #[inline(always)]
 pub fn slot_count(slot_no: u32) -> Result<u64> {
-    api_1arg_call(slot_no, c::slot_count)
-}
-
-/// Slot ID
-#[inline(always)]
-pub fn slot_id(buf: &mut [u8], slot_no: u32) -> Result<u64> {
-    buf_write_1arg(buf, slot_no, c::slot_id)
+    unsafe { c::slot_count(slot_no) }.into()
 }
 
 /// Locate an object based on its keylet and place it into a slot
 #[inline(always)]
-pub fn slot_set(keylet: &[u8], slot_no: u32) -> Result<u64> {
-    let res = unsafe { c::slot_set(keylet.as_ptr() as u32, keylet.len() as u32, slot_no) };
+pub fn slot_set<const PARAM_KEYLET_LEN: usize>(
+    keylet: &[u8; PARAM_KEYLET_LEN],
+    slot_no: u32,
+) -> Result<u64> {
+    // The Hook APIs which accept a 34 byte keylet will also generally accept a 32 byte canonical transaction hash.
+    // TODO: are these the only allowed keylet kinds?
+    if PARAM_KEYLET_LEN != KEYLET_LEN || PARAM_KEYLET_LEN != HASH_LEN {
+        return Err(Error::InvalidKeyletLength);
+    }
+    let res = unsafe { c::slot_set(keylet.as_ptr() as u32, PARAM_KEYLET_LEN as u32, slot_no) };
 
     res.into()
 }
@@ -38,7 +48,7 @@ pub fn slot_set(keylet: &[u8], slot_no: u32) -> Result<u64> {
 /// Compute the serialized size of an object in a slot
 #[inline(always)]
 pub fn slot_size(slot_no: u32) -> Result<u64> {
-    api_1arg_call(slot_no, c::slot_size)
+    unsafe { c::slot_size(slot_no) }.into()
 }
 
 /// Index into a slotted array and assign a sub-object to another slot
