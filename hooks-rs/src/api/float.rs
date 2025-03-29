@@ -8,6 +8,7 @@ use crate::c;
 use super::*;
 
 /// Abstraction of [XFL floating point numbers](https://github.com/XRPLF/XRPL-Standards/discussions/39).
+///
 /// The struct is overloaded with basic numeric operations, such as addition, subtraction, multiplication, division, and negation. Comparison operators are also implemented.
 #[derive(Clone, Copy)]
 pub struct XFL(pub i64);

@@ -44,4 +44,4 @@ jobs:
       - name: "Run Clippy lints in hooks-rs"
         run: |
           cd hooks-rs
-          cargo +nightly clippy --all -- -D warnings
+          cargo clippy --all -- -D warnings

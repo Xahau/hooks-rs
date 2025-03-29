@@ -229,6 +229,10 @@ The latest header files can be found at https://github.com/XRPLF/hook-macros
 
 - Using the debug stream in combination with `trace` API will be helpful. The debug stream is in the format of `wss://xahau-test.net/debugstream/{r-address}`. For example, wss://xahau-test.net/debugstream/rBDwqnirUMhMaYwzGCP1wqju51crjcBCVf.
 
+## Rust nightly version
+
+Due to an upstream dependency `wasm-bindgen-test` not being up to date with the latest Rust nightly, the Rust toolchain version must not go higher than `nightly-2024-10-17`.
+
 ## Credits
 
 - This is a fork of [otov4its/xrpl-hooks](https://github.com/otov4its/xrpl-hooks) which has been unmaintained for a long time.

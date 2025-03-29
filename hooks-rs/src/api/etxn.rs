@@ -66,6 +66,7 @@ pub fn etxn_fee_base<T>(tx_blob: &[T]) -> Result<u64> {
 }
 
 /// Estimate the required fee for a txn to be emitted successfully from a pointer to the transaction buffer.
+///
 /// Does the same thing as [etxn_fee_base](etxn_fee_base) but takes a pointer to the transaction buffer instead of a slice.
 ///
 /// # Example
@@ -135,6 +136,7 @@ pub fn emit<T>(tx: &[T]) -> Result<[u8; HASH_LEN]> {
 }
 
 /// Emit a new transaction from the hook and return the 32-bytes long txn hash.
+///
 /// Same as [emit](emit) but takes a pointer to the transaction buffer instead of a slice.
 /// This might be useful for dealing with raw pointers.
 #[inline(always)]

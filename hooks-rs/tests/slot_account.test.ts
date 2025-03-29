@@ -76,9 +76,7 @@ describe("slot_account.rs", () => {
       const [hookExecution] = meta.HookExecutions as [HookExecution];
 
       const { HookReturnString, HookReturnCode } = hookExecution.HookExecution;
-      expect(Buffer.from(HookReturnString, "hex").toString()).toBe(
-        "passing",
-      );
+      expect(Buffer.from(HookReturnString, "hex").toString()).toBe("passing");
       // Account has 1000000000 drops of XAH
       expect(BigInt("0x" + HookReturnCode)).toBe(BigInt(1000000000n));
     },

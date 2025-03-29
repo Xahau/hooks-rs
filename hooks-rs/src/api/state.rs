@@ -4,7 +4,8 @@ use crate::c;
 
 use super::*;
 
-/// Retrieve the data pointed to by a Hook State key and write it to an output buffer
+/// Retrieve the data pointed to by a Hook State key and write it to an output buffer.
+///
 /// The keys are always 32 bytes (unsigned 256 bit integer) and the values are variable
 /// length with a maximum size determined by validator voting, at time of writing 128 bytes.
 ///
