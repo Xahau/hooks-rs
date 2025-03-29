@@ -49,7 +49,7 @@ describe("keylet_account.rs", () => {
         {
           wallet: bob,
           autofill: true,
-        }
+        },
       );
       if (!txResponse.result.meta) {
         throw new Error("No meta in tx response");
@@ -86,13 +86,13 @@ describe("keylet_account.rs", () => {
 
       // It shouldn't be empty
       const isNotUninitialized = !accountKeyletBuffer.every(
-        (byte) => byte === 0x00
+        (byte) => byte === 0x00,
       );
       expect(isNotUninitialized).toBe(true);
       expect(
-        BigInt("0x" + accountKeyletBuffer.toString("hex"))
+        BigInt("0x" + accountKeyletBuffer.toString("hex")),
       ).toBeGreaterThan(0n);
     },
-    3 * 60_000
+    3 * 60_000,
   );
 });
