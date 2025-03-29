@@ -597,6 +597,7 @@ pub enum Error {
     CantReturnNegative = -33,
 
     // Custom errors from hooks-rs
+    /// Invalid keylet length (needs to be 32 or 34 bytes)
     InvalidKeyletLength = -500,
 }
 

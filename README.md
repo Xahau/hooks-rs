@@ -225,6 +225,10 @@ Slot
 
 The latest header files can be found at https://github.com/XRPLF/hook-macros
 
+## Debugging
+
+- Using the debug stream in combination with `trace` API will be helpful. The debug stream is in the format of `wss://xahau-test.net/debugstream/{r-address}`. For example, wss://xahau-test.net/debugstream/rBDwqnirUMhMaYwzGCP1wqju51crjcBCVf.
+
 ## Credits
 
 - This is a fork of [otov4its/xrpl-hooks](https://github.com/otov4its/xrpl-hooks) which has been unmaintained for a long time.

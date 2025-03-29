@@ -4,11 +4,16 @@ use crate::c;
 
 use super::*;
 
-trait KeyletPayloadBuilder {
+/// One must use `KeyletPayloadBuilder` to create a `KeyletPayload`.
+/// The `KeyletPayload` is then used to create a keylet.
+pub trait KeyletPayloadBuilder {
+    /// Build the keylet payload.
     fn build(&self) -> KeyletPayload;
 }
 
-struct KeyletPayload {
+/// Parameters for `util_keylet`.
+#[derive(Clone, Copy)]
+pub struct KeyletPayload {
     keylet_type: KeyletType,
     a: u32,
     b: u32,
@@ -18,11 +23,13 @@ struct KeyletPayload {
     f: u32,
 }
 
-struct KeyletHook<'a> {
+/// Keylet for a hook
+pub struct KeyletHook<'a> {
     account_id: &'a [u8; ACC_ID_LEN],
 }
 
-struct KeyletAccount<'a> {
+/// Keylet for an account
+pub struct KeyletAccount<'a> {
     account_id: &'a [u8; ACC_ID_LEN],
 }
 
@@ -137,31 +144,21 @@ pub fn util_sha512h(data_in: &[u8]) -> Result<[u8; HASH_LEN]> {
     init_buffer_mut(func)
 }
 
+/// Compute a serialized keylet of a given type
 #[inline(always)]
-pub fn util_keylet<KPB: KeyletPayloadBuilder>(
-    keylet_payload_builder: KPB,
-) -> Result<[u8; KEYLET_LEN]> {
+pub fn util_keylet(keylet_payload: KeyletPayload) -> Result<[u8; KEYLET_LEN]> {
     let func = |buffer_mut_ptr: *mut MaybeUninit<u8>| {
-        let KeyletPayload {
-            keylet_type,
-            a,
-            b,
-            c,
-            d,
-            e,
-            f,
-        } = keylet_payload_builder.build();
         unsafe {
             c::util_keylet(
                 buffer_mut_ptr as u32,
                 KEYLET_LEN as u32,
-                keylet_type.into(),
-                a,
-                b,
-                c,
-                d,
-                e,
-                f,
+                keylet_payload.keylet_type.into(),
+                keylet_payload.a,
+                keylet_payload.b,
+                keylet_payload.c,
+                keylet_payload.d,
+                keylet_payload.e,
+                keylet_payload.f,
             )
         }
         .into()
@@ -171,6 +168,7 @@ pub fn util_keylet<KPB: KeyletPayloadBuilder>(
 }
 
 impl<'a> KeyletHook<'_> {
+    /// Create a new `KeyletHook` instance.
     #[inline(always)]
     pub fn new(account_id: &'a [u8; ACC_ID_LEN]) -> KeyletHook<'a> {
         KeyletHook { account_id }
@@ -193,6 +191,7 @@ impl<'a> KeyletPayloadBuilder for KeyletHook<'a> {
 }
 
 impl<'a> KeyletAccount<'_> {
+    /// Create a new `KeyletAccount` instance.
     #[inline(always)]
     pub fn new(account_id: &'a [u8; ACC_ID_LEN]) -> KeyletAccount<'a> {
         KeyletAccount { account_id }

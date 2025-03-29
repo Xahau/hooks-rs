@@ -1,11 +1,10 @@
-// xrpl
 import { Client, Invoke, Transaction, Wallet } from "@transia/xrpl";
-import { ExecutionUtility } from "@transia/hooks-toolkit";
+import { HookExecution } from "@transia/xrpl/dist/npm/models/transactions/metadata";
 import { TestUtils } from "./setup";
 
-const HOOK_NAME = "keylet_account_id";
+const HOOK_NAME = "keylet_account";
 
-describe("keylet_account_id.rs", () => {
+describe("keylet_account.rs", () => {
   let client: Client;
   let alice: Wallet;
   let bob: Wallet;
@@ -18,10 +17,10 @@ describe("keylet_account_id.rs", () => {
     // Because Faucet only allows one account to be created every 60 seconds,
     // we will use the following accounts for testing. Change the secrets when
     // running out of funds.
-    // rULqKiLvbGda4VKAqsto5hxmmDavJm2oav
-    alice = Wallet.fromSecret(`shW8QFpXBGGh86mjdkpMTKk54kqwh`);
-    // rnvgdKhaMnLtNMZmGAkKq1VNUx25Qg8Vxz
-    bob = Wallet.fromSecret(`snSRRGDAgcUB9F4JWgx2YCt6aS7h3`);
+    // rHExWv7T4WV3MLSn8okiBwEKt2gRZRfAs2
+    alice = Wallet.fromSecret(`ssNt8v9WvQ5WR6orqfe6LU6sHh7R6`);
+    // r3NkZcLESTsCmg1VtL7542nvwDBwjCWpbJ
+    bob = Wallet.fromSecret(`snVo4N7YW3xfYHA64nrBgL8UUkq4X`);
 
     await TestUtils.setHook(client, alice.seed!, hook);
   }, 3 * 60_000);
@@ -31,7 +30,7 @@ describe("keylet_account_id.rs", () => {
   }, 10_000);
 
   it(
-    "accepts an incoming txn",
+    "produces keylet",
     async () => {
       const tx: Invoke & Transaction = {
         TransactionType: "Invoke",
@@ -50,13 +49,21 @@ describe("keylet_account_id.rs", () => {
         {
           wallet: bob,
           autofill: true,
-        },
+        }
       );
       if (!txResponse.result.meta) {
         throw new Error("No meta in tx response");
       }
       if (typeof txResponse.result.meta === "string") {
         throw new Error("Meta is string, not object");
+      }
+      const { meta } = txResponse.result;
+      if (!(meta.HookExecutions && meta.HookExecutions.length > 0)) {
+        throw new Error(`Hook execution data is empty`);
+      }
+
+      if (meta.HookExecutions.length > 1) {
+        throw new Error(`Hook execution happened more than once`);
       }
 
       if (txResponse.result.meta.TransactionResult !== "tesSUCCESS") {
@@ -65,18 +72,27 @@ describe("keylet_account_id.rs", () => {
         throw new Error(`Transaction failed`);
       }
 
-      const hookExecutions = await ExecutionUtility.getHookExecutionsFromMeta(
-        client,
-        txResponse.result.meta,
-      );
-      if (!hookExecutions.executions[0]) {
-        throw new Error(`Hook execution data is empty`);
-      }
+      // safe type: we checked everything
+      const [hookExecution] = meta.HookExecutions as [HookExecution];
 
-      expect(hookExecutions.executions[0].HookReturnString).toMatch(
-        "accept.rs: Finished.",
+      const { HookReturnString, HookReturnCode } = hookExecution.HookExecution;
+      console.log(HookReturnString);
+      expect(BigInt(HookReturnCode)).toBe(0n);
+
+      const accountKeylet = HookReturnString;
+      // Keylet is always serialized to 34 bytes
+      const accountKeyletBuffer = Buffer.from(accountKeylet, `hex`);
+      expect(accountKeyletBuffer.length).toBe(34);
+
+      // It shouldn't be empty
+      const isNotUninitialized = !accountKeyletBuffer.every(
+        (byte) => byte === 0x00
       );
+      expect(isNotUninitialized).toBe(true);
+      expect(
+        BigInt("0x" + accountKeyletBuffer.toString("hex"))
+      ).toBeGreaterThan(0n);
     },
-    3 * 60_000,
+    3 * 60_000
   );
 });
