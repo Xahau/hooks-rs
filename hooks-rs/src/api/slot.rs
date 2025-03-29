@@ -1,3 +1,5 @@
+use core::mem::MaybeUninit;
+
 use crate::api;
 use crate::c;
 
@@ -5,16 +7,15 @@ use super::*;
 
 /// Serialize and output a slotted object
 #[inline(always)]
-pub fn slot(slotted_obj: &mut [u8], slot_no: u32) -> Result<u64> {
-    let res = unsafe {
-        c::slot(
-            slotted_obj.as_mut_ptr() as u32,
-            slotted_obj.len() as u32,
-            slot_no,
-        )
+pub fn slot<const SLOT_LEN: usize>(slot_no: u32) -> Result<[u8; SLOT_LEN]> {
+    let func = |buffer_mut_ptr: *mut MaybeUninit<u8>| {
+        let result: Result<u64> =
+            unsafe { c::slot(buffer_mut_ptr as u32, SLOT_LEN as u32, slot_no).into() };
+
+        result
     };
 
-    res.into()
+    init_buffer_mut(func)
 }
 
 /// Free up a currently occupied slot
@@ -37,7 +38,7 @@ pub fn slot_set<const PARAM_KEYLET_LEN: usize>(
 ) -> Result<u64> {
     // The Hook APIs which accept a 34 byte keylet will also generally accept a 32 byte canonical transaction hash.
     // TODO: are these the only allowed keylet kinds?
-    if PARAM_KEYLET_LEN != KEYLET_LEN || PARAM_KEYLET_LEN != HASH_LEN {
+    if PARAM_KEYLET_LEN != KEYLET_LEN && PARAM_KEYLET_LEN != HASH_LEN {
         return Err(Error::InvalidKeyletLength);
     }
     let res = unsafe { c::slot_set(keylet.as_ptr() as u32, PARAM_KEYLET_LEN as u32, slot_no) };
@@ -60,7 +61,8 @@ pub fn slot_subarray(parent_slot: u32, array_id: u32, new_slot: u32) -> Result<u
 /// Index into a slotted object and assign a sub-object to another slot
 #[inline(always)]
 pub fn slot_subfield(parent_slot: u32, field_id: FieldId, new_slot: u32) -> Result<u64> {
-    api_3arg_call(parent_slot, field_id as _, new_slot, c::slot_subfield)
+    let res = unsafe { c::slot_subfield(parent_slot, field_id as u32, new_slot) };
+    res.into()
 }
 
 /// Retrieve the field code of an object in a slot and, optionally, some other information

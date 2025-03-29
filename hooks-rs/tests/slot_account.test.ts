@@ -2,9 +2,9 @@ import { Client, Invoke, Transaction, Wallet } from "@transia/xrpl";
 import { HookExecution } from "@transia/xrpl/dist/npm/models/transactions/metadata";
 import { TestUtils } from "./setup";
 
-const HOOK_NAME = "keylet_account";
+const HOOK_NAME = "slot_account";
 
-describe("keylet_account.rs", () => {
+describe("slot_account.rs", () => {
   let client: Client;
   let alice: Wallet;
   let bob: Wallet;
@@ -17,10 +17,10 @@ describe("keylet_account.rs", () => {
     // Because Faucet only allows one account to be created every 60 seconds,
     // we will use the following accounts for testing. Change the secrets when
     // running out of funds.
-    // rHExWv7T4WV3MLSn8okiBwEKt2gRZRfAs2
-    alice = Wallet.fromSecret(`ssNt8v9WvQ5WR6orqfe6LU6sHh7R6`);
-    // r3NkZcLESTsCmg1VtL7542nvwDBwjCWpbJ
-    bob = Wallet.fromSecret(`snVo4N7YW3xfYHA64nrBgL8UUkq4X`);
+    // rh49mCBgncu9xdyyeRwU8LHi3feUxUUrHj
+    alice = Wallet.fromSecret(`shrXvXogexynVPmEMJ3WAvgHNBBpB`);
+    // rEHSy16Fs7Yw5tMrGpGw9PUotrq5AwkSuh
+    bob = Wallet.fromSecret(`snNBCoUnM7y5NuPduZVfBk8r4cwLv`);
 
     await TestUtils.setHook(client, alice.seed!, hook);
   }, 3 * 60_000);

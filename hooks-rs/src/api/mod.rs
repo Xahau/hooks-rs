@@ -516,7 +516,7 @@ impl<T> Result<T> {
 /// Possible errors returned by Hook APIs.
 ///
 /// Errors are global across all Hook APIs.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 #[repr(i32)]
 pub enum Error {
     /// A pointer or buffer length provided as a parameter described memory outside of the Hook's allowed memory region.
