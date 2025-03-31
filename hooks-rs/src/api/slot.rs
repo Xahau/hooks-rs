@@ -53,9 +53,12 @@ pub fn slot_size(slot_no: u32) -> Result<u64> {
 }
 
 /// Index into a slotted array and assign a sub-object to another slot
+/// @param array_index The sf code of the field you are searching for.
+/// To compute this manually take the serialized type and shift it into the 16 highest bits of uint32_t, then take the field and place it in the 16 lowest bits.
+/// For example: sfEmitNonce has type 5 and field 11 thus its value is 0x050BU
 #[inline(always)]
-pub fn slot_subarray(parent_slot: u32, array_id: u32, new_slot: u32) -> Result<u64> {
-    api_3arg_call(parent_slot, array_id, new_slot, c::slot_subarray)
+pub fn slot_subarray(parent_slot: u32, array_index: u32, new_slot: u32) -> Result<u64> {
+    unsafe { c::slot_subarray(parent_slot, array_index, new_slot) }.into()
 }
 
 /// Index into a slotted object and assign a sub-object to another slot
