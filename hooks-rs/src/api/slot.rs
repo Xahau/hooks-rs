@@ -18,7 +18,7 @@ pub fn slot<const SLOT_LEN: usize>(slot_no: u32) -> Result<[u8; SLOT_LEN]> {
     init_buffer_mut(func)
 }
 
-/// Free up a currently occupied slot
+/// Free up a currently occupied slot. Returns 1 on success.
 #[inline(always)]
 pub fn slot_clear(slot_no: u32) -> Result<u64> {
     unsafe { c::slot_clear(slot_no) }.into()
