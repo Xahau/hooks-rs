@@ -11,9 +11,7 @@ import { HookExecution } from "@transia/xrpl/dist/npm/models/transactions/metada
 
 const HOOK_NAME = "util_accid";
 
-// util_accid is not working, needs more debugging.
-// skip the test for now
-describe.skip("util_accid.rs", () => {
+describe("util_accid.rs", () => {
   let client: Client;
   let alice: Wallet;
   let bob: Wallet;
@@ -34,7 +32,7 @@ describe.skip("util_accid.rs", () => {
     await client.disconnect();
   }, 10_000);
 
-  it.skip(
+  it(
     "converts r-address to an account id",
     async () => {
       const tx: Invoke & Transaction = {

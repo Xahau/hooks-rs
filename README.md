@@ -182,7 +182,7 @@ Originating transaction
 Utilities
 
 - [x] `util_raddr`
-- [ ] `util_accid`
+- [x] `util_accid`
 - [ ] `util_verify`
 - [ ] `util_sha512h`
 - [x] `util_keylet`

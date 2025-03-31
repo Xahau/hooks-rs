@@ -84,7 +84,7 @@ pub fn util_raddr(accid: &[u8; 20]) -> Result<[u8; 35]> {
 pub fn util_accid<const R_ADDRESS_LEN: usize>(raddr_in: &[u8; R_ADDRESS_LEN]) -> Result<[u8; 20]> {
     let func = |buffer_mut_ptr: *mut MaybeUninit<u8>| {
         let result: Result<u64> = unsafe {
-            c::util_raddr(
+            c::util_accid(
                 buffer_mut_ptr as u32,
                 ACC_ID_LEN as u32,
                 raddr_in.as_ptr() as u32,
