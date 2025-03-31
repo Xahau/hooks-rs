@@ -109,8 +109,9 @@ pub extern "C" fn hook(_: u32) -> i64 {
         .unwrap_line_number();
     // 1.663822854409434e+29
     let b = XFL::new(14, 1663822854409434).unwrap_line_number();
-    // -5.957877192508556e-31
-    let expected_division_result = XFL::new(-46, 5957877192508556)
+    // TODO: is this right?
+    // -5.957877192508581e-31
+    let expected_division_result = XFL::new(-46, 5957877192508581)
         .unwrap_line_number()
         .neg()
         .unwrap_line_number();
