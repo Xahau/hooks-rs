@@ -134,7 +134,7 @@ Float
 - [x] `float_negate`
 - [x] `float_compare`
 - [x] `float_sum`
-- [ ] `float_sto`
+- [x] `float_sto`
 - [x] `float_sto_set`
 - [x] `float_invert`
 - [x] `float_divide`
@@ -182,10 +182,10 @@ Originating transaction
 Utilities
 
 - [x] `util_raddr`
-- [ ] `util_accid`
+- [x] `util_accid`
 - [ ] `util_verify`
 - [ ] `util_sha512h`
-- [ ] `util_keylet`
+- [x] `util_keylet`
 
 Hook context
 
@@ -208,22 +208,30 @@ Serialization
 
 Slot
 
-- [ ] `slot`
+- [x] `slot`
 - [ ] `slot_clear`
 - [ ] `slot_count`
-- [ ] `slot_set`
+- [x] `slot_set`
 - [ ] `slot_size`
 - [ ] `slot_subarray`
-- [ ] `slot_subfield`
+- [x] `slot_subfield`
 - [ ] `slot_type`
 - [ ] `xpop_slot`
-- [ ] `slot_float`
+- [x] `slot_float`
 
 </details>
 
 ## C bindings
 
 The latest header files can be found at https://github.com/XRPLF/hook-macros
+
+## Debugging
+
+- Using the debug stream in combination with `trace` API will be helpful. The debug stream is in the format of `wss://xahau-test.net/debugstream/{r-address}`. For example, wss://xahau-test.net/debugstream/rBDwqnirUMhMaYwzGCP1wqju51crjcBCVf.
+
+## Rust nightly version
+
+Due to an upstream dependency `wasm-bindgen-test` not being up to date with the latest Rust nightly, the Rust toolchain version must not go higher than `nightly-2024-10-17`.
 
 ## Credits
 

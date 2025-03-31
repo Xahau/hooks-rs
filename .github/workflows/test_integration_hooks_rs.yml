@@ -18,7 +18,7 @@ jobs:
       - name: "Use Rust nightly"
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          toolchain: "nightly"
+          toolchain: "nightly-2024-10-17"
           target: "wasm32-unknown-unknown"
           components: "clippy,rustfmt"
           override: true

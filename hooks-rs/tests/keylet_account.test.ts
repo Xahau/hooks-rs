@@ -1,17 +1,10 @@
-// xrpl
-import {
-  Client,
-  decodeAccountID,
-  Invoke,
-  Transaction,
-  Wallet,
-} from "@transia/xrpl";
-import { TestUtils } from "./setup";
+import { Client, Invoke, Transaction, Wallet } from "@transia/xrpl";
 import { HookExecution } from "@transia/xrpl/dist/npm/models/transactions/metadata";
+import { TestUtils } from "./setup";
 
-const HOOK_NAME = "util_accid";
+const HOOK_NAME = "keylet_account";
 
-describe("util_accid.rs", () => {
+describe("keylet_account.rs", () => {
   let client: Client;
   let alice: Wallet;
   let bob: Wallet;
@@ -21,10 +14,14 @@ describe("util_accid.rs", () => {
     client = new Client("wss://xahau-test.net", {});
     await client.connect();
     client.networkID = await client.getNetworkID();
-    // rUVWhZnU2AYWYXzHpCUcSVtcuuNXkuDD1X
-    alice = Wallet.fromSecret(`snudyVMLzKNzXZ9HbzdiNFzfDKP2F`);
-    // r4tryuYjz7ZxtJFb2ELWGTNnEFsT1ZxaJp
-    bob = Wallet.fromSecret(`snmxzsV6WCiZ1RCg566sKfMkzPcwB`);
+    // Because Faucet only allows one account to be created every 60 seconds,
+    // we will use the following accounts for testing. Change the secrets when
+    // running out of funds.
+    // rHExWv7T4WV3MLSn8okiBwEKt2gRZRfAs2
+    alice = Wallet.fromSecret(`ssNt8v9WvQ5WR6orqfe6LU6sHh7R6`);
+    // r3NkZcLESTsCmg1VtL7542nvwDBwjCWpbJ
+    bob = Wallet.fromSecret(`snVo4N7YW3xfYHA64nrBgL8UUkq4X`);
+
     await TestUtils.setHook(client, alice.seed!, hook);
   }, 3 * 60_000);
 
@@ -33,7 +30,7 @@ describe("util_accid.rs", () => {
   }, 10_000);
 
   it(
-    "converts r-address to an account id",
+    "produces keylet",
     async () => {
       const tx: Invoke & Transaction = {
         TransactionType: "Invoke",
@@ -60,6 +57,14 @@ describe("util_accid.rs", () => {
       if (typeof txResponse.result.meta === "string") {
         throw new Error("Meta is string, not object");
       }
+      const { meta } = txResponse.result;
+      if (!(meta.HookExecutions && meta.HookExecutions.length > 0)) {
+        throw new Error(`Hook execution data is empty`);
+      }
+
+      if (meta.HookExecutions.length > 1) {
+        throw new Error(`Hook execution happened more than once`);
+      }
 
       if (txResponse.result.meta.TransactionResult !== "tesSUCCESS") {
         console.error(JSON.stringify(txResponse, null, 2));
@@ -67,19 +72,22 @@ describe("util_accid.rs", () => {
         throw new Error(`Transaction failed`);
       }
 
-      const [hookExecution] = txResponse.result.meta.HookExecutions as [
-        HookExecution,
-      ];
+      // safe type: we checked everything
+      const [hookExecution] = meta.HookExecutions as [HookExecution];
 
       const { HookReturnString, HookReturnCode } = hookExecution.HookExecution;
+      console.log(HookReturnString);
+      expect(BigInt(HookReturnCode)).toBe(0n);
 
-      expect(
-        TestUtils.deserializeHexStringAsBigInt(HookReturnCode.toString()),
-      ).toBe(0n);
-      expect(HookReturnString).toMatch(
-        decodeAccountID("rLqUFYGLMBS9jF63iRkadvu3cTixadRTd3")
-          .toString(`hex`)
-          .toUpperCase(),
+      const accountKeylet = HookReturnString;
+      // Keylet is always serialized to 34 bytes
+      const accountKeyletBuffer = Buffer.from(accountKeylet, `hex`);
+      expect(accountKeyletBuffer.length).toBe(34);
+
+      // Check at https://richardah.github.io/xrpl-keylet-tools/
+      // by inserting r3zEReqN3Ge3g1GXUThuVSrn4dM8xpoA7i
+      expect(accountKeylet.toUpperCase()).toBe(
+        "0061355E27663861169420D62A5955FECE7FB519121F8CDC15963FD1561653531F9C",
       );
     },
     3 * 60_000,

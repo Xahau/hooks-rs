@@ -96,7 +96,7 @@ export class TestUtils {
   }
 
   static async buildHook(hookName: string): Promise<iHook> {
-    await exec("cargo +nightly build --release");
+    await exec("cargo build --release");
     const hook = createHookPayload(
       0,
       // Add hook code after this

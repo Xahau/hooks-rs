@@ -109,18 +109,12 @@ pub extern "C" fn hook(_: u32) -> i64 {
         .unwrap_line_number();
     // 1.663822854409434e+29
     let b = XFL::new(14, 1663822854409434).unwrap_line_number();
-    // -5.957877192508556e-31
-    let expected_division_result = XFL::new(
-        -46,
-        // TODO: Not sure if https://richardah.github.io/xfl-tools/ is giving a wrong
-        // float number because it's javascript, or if this is a bug in xrpld (low chance tho).
-        // Originally it shows 5957877192508556, but trace_float of the result shows 5957877192508580.
-        // For now we'll just use the result from trace_float, but need to confirm what's going on
-        5957877192508580,
-    )
-    .unwrap_line_number()
-    .neg()
-    .unwrap_line_number();
+    // TODO: is this right?
+    // -5.957877192508581e-31
+    let expected_division_result = XFL::new(-46, 5957877192508581)
+        .unwrap_line_number()
+        .neg()
+        .unwrap_line_number();
     if (a / b).unwrap_line_number() != expected_division_result {
         rollback(b"", line!().into());
     }

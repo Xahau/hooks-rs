@@ -4,6 +4,35 @@ use crate::c;
 
 use super::*;
 
+/// One must use `KeyletPayloadBuilder` to create a `KeyletPayload`.
+/// The `KeyletPayload` is then used to create a keylet.
+pub trait KeyletPayloadBuilder {
+    /// Build the keylet payload.
+    fn build(&self) -> KeyletPayload;
+}
+
+/// Parameters for `util_keylet`.
+#[derive(Clone, Copy)]
+pub struct KeyletPayload {
+    keylet_type: KeyletType,
+    a: u32,
+    b: u32,
+    c: u32,
+    d: u32,
+    e: u32,
+    f: u32,
+}
+
+/// Keylet for a hook
+pub struct KeyletHook<'a> {
+    account_id: &'a [u8; ACC_ID_LEN],
+}
+
+/// Keylet for an account
+pub struct KeyletAccount<'a> {
+    account_id: &'a [u8; ACC_ID_LEN],
+}
+
 /// Convert a 20 byte Account ID to an r-address of 25 and 35 characters in length.
 ///
 /// The resulting buffer might not be fully populated because size of an r-address varies.
@@ -55,7 +84,7 @@ pub fn util_raddr(accid: &[u8; 20]) -> Result<[u8; 35]> {
 pub fn util_accid<const R_ADDRESS_LEN: usize>(raddr_in: &[u8; R_ADDRESS_LEN]) -> Result<[u8; 20]> {
     let func = |buffer_mut_ptr: *mut MaybeUninit<u8>| {
         let result: Result<u64> = unsafe {
-            c::util_raddr(
+            c::util_accid(
                 buffer_mut_ptr as u32,
                 ACC_ID_LEN as u32,
                 raddr_in.as_ptr() as u32,
@@ -113,4 +142,73 @@ pub fn util_sha512h(data_in: &[u8]) -> Result<[u8; HASH_LEN]> {
     };
 
     init_buffer_mut(func)
+}
+
+/// Compute a serialized keylet of a given type
+#[inline(always)]
+pub fn util_keylet(keylet_payload: KeyletPayload) -> Result<[u8; KEYLET_LEN]> {
+    let func = |buffer_mut_ptr: *mut MaybeUninit<u8>| {
+        unsafe {
+            c::util_keylet(
+                buffer_mut_ptr as u32,
+                KEYLET_LEN as u32,
+                keylet_payload.keylet_type.into(),
+                keylet_payload.a,
+                keylet_payload.b,
+                keylet_payload.c,
+                keylet_payload.d,
+                keylet_payload.e,
+                keylet_payload.f,
+            )
+        }
+        .into()
+    };
+
+    init_buffer_mut(func)
+}
+
+impl<'a> KeyletHook<'_> {
+    /// Create a new `KeyletHook` instance.
+    #[inline(always)]
+    pub fn new(account_id: &'a [u8; ACC_ID_LEN]) -> KeyletHook<'a> {
+        KeyletHook { account_id }
+    }
+}
+
+impl KeyletPayloadBuilder for KeyletHook<'_> {
+    #[inline(always)]
+    fn build(&self) -> KeyletPayload {
+        KeyletPayload {
+            keylet_type: KeyletType::Hook,
+            a: self.account_id.as_ptr() as u32,
+            b: ACC_ID_LEN as u32,
+            c: 0,
+            d: 0,
+            e: 0,
+            f: 0,
+        }
+    }
+}
+
+impl<'a> KeyletAccount<'_> {
+    /// Create a new `KeyletAccount` instance.
+    #[inline(always)]
+    pub fn new(account_id: &'a [u8; ACC_ID_LEN]) -> KeyletAccount<'a> {
+        KeyletAccount { account_id }
+    }
+}
+
+impl KeyletPayloadBuilder for KeyletAccount<'_> {
+    #[inline(always)]
+    fn build(&self) -> KeyletPayload {
+        KeyletPayload {
+            keylet_type: KeyletType::Account,
+            a: self.account_id.as_ptr() as u32,
+            b: ACC_ID_LEN as u32,
+            c: 0,
+            d: 0,
+            e: 0,
+            f: 0,
+        }
+    }
 }

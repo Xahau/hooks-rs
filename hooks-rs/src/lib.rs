@@ -38,6 +38,7 @@ pub mod api;
 pub mod utils;
 
 /// Transaction builders. It is a lot of manual work to build an XRPL transaction.
+///
 /// This module provides a few pre-built transaction builders as well as a generic
 /// buffer and builder that can be used to build any transaction.
 pub mod transaction;

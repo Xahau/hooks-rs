@@ -96,7 +96,7 @@ export class TestUtils {
   }
 
   static async buildHook(hookName: string): Promise<iHook> {
-    await exec("cargo +nightly build --examples --release");
+    await exec("cargo build --examples --release");
     const hook = createHookPayload(
       0,
       // Add hook code after this
@@ -123,7 +123,7 @@ export class TestUtils {
     // Otherwise, the node will not validate the SetHook transaction.
     // Therefore, flatten it using wasm-opt.
     await exec(
-      `wasm-opt ${wasmInFile} --flatten --rereloop -Oz -Oz -o ${wasmOutFlattened}`,
+      `wasm-opt ${wasmInFile} --flatten --rereloop -Oz -o ${wasmOutFlattened}`,
     );
     const wasmOutCleaned = path.resolve(wasmDir, `${hookName}-cleaned.wasm`);
     const hookCleanerOut = await exec(

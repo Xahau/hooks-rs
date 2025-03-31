@@ -70,7 +70,6 @@ export async function buildHook(hookName: string): Promise<HookPayload> {
   Logger.log(`info`, `Building hook "${hookName}"`);
   const cargoBuildOutput = new Deno.Command(`cargo`, {
     args: [
-      "+nightly",
       "build",
       "--release",
     ],
