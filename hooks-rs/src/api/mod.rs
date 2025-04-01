@@ -614,26 +614,11 @@ impl Error {
     }
 }
 
-type Api1ArgsU32 = unsafe extern "C" fn(u32) -> i64;
 type Api2ArgsU32 = unsafe extern "C" fn(u32, u32) -> i64;
 type Api3ArgsU32 = unsafe extern "C" fn(u32, u32, u32) -> i64;
 
 type BufReader = Api2ArgsU32;
 type BufWriter1Arg = Api3ArgsU32;
-
-#[inline(always)]
-fn api_1arg_call(arg: u32, fun: Api1ArgsU32) -> Result<u64> {
-    let res = unsafe { fun(arg) };
-
-    res.into()
-}
-
-#[inline(always)]
-fn api_3arg_call(arg_1: u32, arg_2: u32, arg_3: u32, fun: Api3ArgsU32) -> Result<u64> {
-    let res = unsafe { fun(arg_1, arg_2, arg_3) };
-
-    res.into()
-}
 
 #[inline(always)]
 fn buf_write_1arg(buf_write: &mut [u8], arg: u32, fun: BufWriter1Arg) -> Result<u64> {

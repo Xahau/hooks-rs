@@ -69,7 +69,7 @@ pub fn otxn_type() -> i64 {
 /// Load the originating transaction into a slot
 #[inline(always)]
 pub fn otxn_slot(slot_no: u32) -> Result<u64> {
-    api_1arg_call(slot_no, c::otxn_slot)
+    unsafe { c::otxn_slot(slot_no) }.into()
 }
 
 /// Retrieve the parameter value for a named Invoke transaction parameter

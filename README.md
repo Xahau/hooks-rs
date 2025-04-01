@@ -175,7 +175,7 @@ Originating transaction
 - [ ] `otxn_generation`
 - [x] `otxn_id`
 - [x] `otxn_type`
-- [ ] `otxn_slot`
+- [x] `otxn_slot`
 - [x] `otxn_param`
 - [ ] `meta_slot`
 
@@ -209,11 +209,11 @@ Serialization
 Slot
 
 - [x] `slot`
-- [ ] `slot_clear`
-- [ ] `slot_count`
+- [x] `slot_clear`
+- [x] `slot_count`
 - [x] `slot_set`
-- [ ] `slot_size`
-- [ ] `slot_subarray`
+- [x] `slot_size`
+- [x] `slot_subarray`
 - [x] `slot_subfield`
 - [ ] `slot_type`
 - [ ] `xpop_slot`
