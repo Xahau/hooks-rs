@@ -175,7 +175,7 @@ Originating transaction
 - [ ] `otxn_generation`
 - [x] `otxn_id`
 - [x] `otxn_type`
-- [ ] `otxn_slot`
+- [x] `otxn_slot`
 - [x] `otxn_param`
 - [ ] `meta_slot`
 

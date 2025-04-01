@@ -8,17 +8,14 @@ const OTXN_SLOT_ID: u32 = 1;
 const MEMOS_SLOT_ID: u32 = 2;
 const MEMOS_INDEX_0_ID: u32 = 3;
 const MEMOS_INDEX_1_ID: u32 = 4;
-const MEMO_INDEX_0_ID: u32 = 5;
-const MEMO_INDEX_1_ID: u32 = 6;
-const MEMO_DATA_INDEX_0_ID: u32 = 7;
-const MEMO_DATA_INDEX_1_ID: u32 = 8;
+const MEMO_DATA_INDEX_0_ID: u32 = 5;
+const MEMO_DATA_INDEX_1_ID: u32 = 6;
 
 #[no_mangle]
 pub extern "C" fn cbak(_: u32) -> i64 {
     0
 }
 
-// Example: https://github.com/Xahau/TreasuryHook/blob/ac8e2f7db4b687450d9ca1cba412bfac3b1a87bc/treasuryInvoke.c#L150-L153
 #[no_mangle]
 pub extern "C" fn hook(_: u32) -> i64 {
     // Every hook needs to import guard function
@@ -57,30 +54,27 @@ pub extern "C" fn hook(_: u32) -> i64 {
     let _ = trace_num(b"memos_index_0", a.try_into().unwrap());
     let _ = trace_num(b"memos_index_1", b.try_into().unwrap());
 
-    slot_subfield(MEMOS_INDEX_0_ID, FieldId::Memo, MEMO_INDEX_0_ID).expect(b"MEMO_INDEX_0_ID");
-    slot_subfield(MEMOS_INDEX_1_ID, FieldId::Memo, MEMO_INDEX_1_ID).expect(b"MEMO_INDEX_1_ID");
+    slot_subfield(MEMOS_INDEX_0_ID, FieldId::MemoData, MEMO_DATA_INDEX_0_ID)
+        .expect(b"MEMO_INDEX_0_ID");
+    slot_subfield(MEMOS_INDEX_1_ID, FieldId::MemoData, MEMO_DATA_INDEX_1_ID)
+        .expect(b"MEMO_INDEX_1_ID");
 
-    // slot_subfield(MEMO_INDEX_0_ID, FieldId::MemoData, MEMO_DATA_INDEX_0_ID)
-    //     .expect(b"MEMO_DATA_INDEX_0_ID");
-    // slot_subfield(MEMO_INDEX_1_ID, FieldId::MemoData, MEMO_DATA_INDEX_1_ID)
-    //     .expect(b"MEMO_DATA_INDEX_1_ID");
+    // 0x01 is the data length
+    // [0x01, 0x21]
+    let memo_data_0: [u8; 2] = slot(MEMO_DATA_INDEX_0_ID).expect(b"SLOT_MEMO_DATA_INDEX_0_ID");
+    // [0x01, 0x31]
+    let memo_data_1: [u8; 2] = slot(MEMO_DATA_INDEX_1_ID).expect(b"SLOT_MEMO_DATA_INDEX_1_ID");
 
-    // let memo_data_0: [u8; 1] = slot(MEMO_DATA_INDEX_0_ID).unwrap_line_number();
-    // let memo_data_1: [u8; 1] = slot(MEMO_DATA_INDEX_1_ID).unwrap_line_number();
+    let expected_memo_data_0: [u8; 2] = [0x01, 0x21];
+    let expected_memo_data_1: [u8; 2] = [0x01, 0x31];
 
-    // let _ = trace(b"memo_data_0", &memo_data_0, DataRepr::AsHex);
-    // let _ = trace(b"memo_data_1", &memo_data_1, DataRepr::AsHex);
+    if !is_buffer_equal(&memo_data_0, &expected_memo_data_0) {
+        rollback(b"memo_data_0 incorrect", -3);
+    }
 
-    // let expected_memo_data_0: [u8; 1] = [0x21];
-    // let expected_memo_data_1: [u8; 1] = [0x31];
-
-    // if !is_buffer_equal(&memo_data_0, &expected_memo_data_0) {
-    //     rollback(b"memo_data_0 incorrect", -3);
-    // }
-
-    // if !is_buffer_equal(&memo_data_1, &expected_memo_data_1) {
-    //     rollback(b"memo_data_1 incorrect", -4);
-    // }
+    if !is_buffer_equal(&memo_data_1, &expected_memo_data_1) {
+        rollback(b"memo_data_1 incorrect", -4);
+    }
 
     accept(b"passing", 0);
 }
