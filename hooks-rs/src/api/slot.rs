@@ -53,6 +53,7 @@ pub fn slot_size(slot_no: u32) -> Result<u64> {
 }
 
 /// Index into a slotted array and assign a sub-object to another slot
+///
 /// @param array_index The sf code of the field you are searching for.
 /// To compute this manually take the serialized type and shift it into the 16 highest bits of uint32_t, then take the field and place it in the 16 lowest bits.
 /// For example: sfEmitNonce has type 5 and field 11 thus its value is 0x050BU
