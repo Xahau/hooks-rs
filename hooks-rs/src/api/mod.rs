@@ -690,9 +690,9 @@ impl From<KeyletType> for u32 {
     }
 }
 
-impl Into<FieldId> for u32 {
+impl From<u32> for FieldId {
     #[inline(always)]
-    fn into(self) -> FieldId {
-        unsafe { core::mem::transmute(self) }
+    fn from(val: u32) -> Self {
+        unsafe { core::mem::transmute(val) }
     }
 }
