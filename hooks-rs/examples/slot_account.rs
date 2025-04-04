@@ -66,6 +66,22 @@ pub extern "C" fn hook(_: u32) -> i64 {
     let xfl_balance_0 = XFL::from_sto(&account_balance_slot).unwrap_line_number();
     let i64_balance_0 = xfl_balance_0.to_int64(0, false).unwrap_line_number();
 
+    let st = slot_type(ACCOUNT_BALANCE_SLOT_ID, SlotTypeFlags::Field).unwrap_line_number();
+
+    match st {
+        FieldOrXahAmount::Field(field_id) => {
+            // This is expected
+            if field_id != FieldId::Balance {
+                // This should not happen
+                rollback(b"Field id is not sfBalance", field_id as i64);
+            }
+        }
+        _ => {
+            // This should not happen
+            rollback(b"Field id is not sfBalance", -4);
+        }
+    }
+
     // Another way to get the account balance
     // See https://github.com/Xahau/xahaud/blob/0b675465b4e038e6080146043ad7fb2bfaf1a53e/src/ripple/app/hook/impl/applyHook.cpp#L2790-L2797
     // balance is multiplied by 10^-6 (drops decimals) again for some reason when using slot_float
@@ -82,7 +98,7 @@ pub extern "C" fn hook(_: u32) -> i64 {
 
     // Assert same (equality is overloaded)
     if xfl_balance_0 != adjusted_xfl_balance_1 {
-        rollback(b"xfl_balance_0 != adjusted_xfl_balance_1", -4);
+        rollback(b"xfl_balance_0 != adjusted_xfl_balance_1", -5);
     }
 
     accept(b"passing", i64_balance_0);

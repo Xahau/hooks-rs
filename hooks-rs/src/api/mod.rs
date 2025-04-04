@@ -179,13 +179,13 @@ pub enum KeyletType {
 ///
 /// Used as return of [slot_type] function
 #[derive(Clone, Copy)]
-pub enum FieldOrXrpAmount {
+pub enum FieldOrXahAmount {
     /// Field ID
     Field(FieldId),
-    /// STI_AMOUNT type contains a native (XRP) amount
-    XrpAmount,
-    /// STI_AMOUNT type contains non-XRP amount
-    NonXrpAmount,
+    /// STI_AMOUNT type contains a native (XAH) amount
+    XahAmount,
+    /// STI_AMOUNT type contains non-XAH amount
+    NonXahAmount,
 }
 
 /// Flags for [slot_type]
@@ -193,13 +193,13 @@ pub enum FieldOrXrpAmount {
 pub enum SlotTypeFlags {
     /// Field
     Field,
-    /// STI_AMOUNT type contains a native (XRP) amount
-    XrpAmount,
+    /// STI_AMOUNT type contains an amount
+    STIAmount,
 }
 
 /// Field type
 #[allow(missing_docs)]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 #[repr(u32)]
 pub enum FieldId {
     CloseResolution = c::sfCloseResolution,
@@ -687,5 +687,12 @@ impl From<KeyletType> for u32 {
     #[inline(always)]
     fn from(keylet_type: KeyletType) -> Self {
         keylet_type as _
+    }
+}
+
+impl From<u32> for FieldId {
+    #[inline(always)]
+    fn from(val: u32) -> Self {
+        unsafe { core::mem::transmute(val) }
     }
 }

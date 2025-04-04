@@ -143,8 +143,8 @@ Float
 - [x] `float_mantissa`
 - [x] `float_sign`
 - [x] `float_int`
-- [ ] `float_root`
-- [ ] `float_log`
+- [x] `float_root`
+- [x] `float_log`
 
 Ledger
 
@@ -184,7 +184,7 @@ Utilities
 - [x] `util_raddr`
 - [x] `util_accid`
 - [ ] `util_verify`
-- [ ] `util_sha512h`
+- [x] `util_sha512h`
 - [x] `util_keylet`
 
 Hook context
@@ -215,7 +215,7 @@ Slot
 - [x] `slot_size`
 - [x] `slot_subarray`
 - [x] `slot_subfield`
-- [ ] `slot_type`
+- [x] `slot_type`
 - [ ] `xpop_slot`
 - [x] `slot_float`
 

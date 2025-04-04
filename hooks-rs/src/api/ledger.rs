@@ -41,3 +41,26 @@ pub fn ledger_nonce() -> Result<[u8; 32]> {
         result
     })
 }
+
+/// Search for a keylet within a specified range on the current ledger
+#[inline(always)]
+pub fn ledger_keylet(
+    low_boundary_keylet: [u8; KEYLET_LEN],
+    high_boundary_keylet: [u8; KEYLET_LEN],
+) -> Result<[u8; KEYLET_LEN]> {
+    let func = |buffer_mut_ptr: *mut MaybeUninit<u8>| {
+        unsafe {
+            c::ledger_keylet(
+                buffer_mut_ptr as u32,
+                KEYLET_LEN as u32,
+                low_boundary_keylet.as_ptr() as u32,
+                KEYLET_LEN as u32,
+                high_boundary_keylet.as_ptr() as u32,
+                KEYLET_LEN as u32,
+            )
+        }
+        .into()
+    };
+
+    init_buffer_mut(func)
+}
