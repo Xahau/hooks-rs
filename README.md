@@ -143,8 +143,8 @@ Float
 - [x] `float_mantissa`
 - [x] `float_sign`
 - [x] `float_int`
-- [ ] `float_root`
-- [ ] `float_log`
+- [x] `float_root`
+- [x] `float_log`
 
 Ledger
 

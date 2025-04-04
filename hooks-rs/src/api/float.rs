@@ -142,6 +142,26 @@ impl XFL {
         })
     }
 
+    /// Compute the nth root of an XFL
+    ///
+    /// Due to speed constraints,float_root converts the argument to an IEEE base-2 double precision floating point before applying n-th root. Therefore the returned result will often contain less precision than expected. If you need better precision you should consider dividing your XFL into a high and a low product then individually take the square roots of those products and multiply the results together.
+    ///
+    /// If a negative number is passed the function will return COMPLEX_NOT_SUPPORTED if the root is an even root.
+    #[inline(always)]
+    pub fn root(&self, root: u32) -> Result<XFL> {
+        Self::from_verified_i64(unsafe { c::float_root(self.0, root) })
+    }
+
+    /// Compute the decimal log of an XFL
+    ///
+    /// Due to speed constraints,float_log converts the argument to an IEEE base-2 double precision floating point before applying **base 10** log. Therefore the returned result will often contain less precision than expected.
+    ///
+    /// If a negative number is passed the function will return COMPLEX_NOT_SUPPORTED.
+    #[inline(always)]
+    pub fn log(&self) -> Result<XFL> {
+        Self::from_verified_i64(unsafe { c::float_log(self.0) })
+    }
+
     // Create a new XFL number from a verified i64, that is,
     // a number that is known to be a valid XFL number.
     //

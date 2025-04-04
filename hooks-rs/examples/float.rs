@@ -130,6 +130,31 @@ pub extern "C" fn hook(_: u32) -> i64 {
         rollback(b"", line!().into());
     }
 
+    // root
+    let four = XFL::new(0, 4).unwrap_line_number();
+    let hundred = XFL::new(0, 100).unwrap_line_number();
+
+    let two = XFL::new(0, 2).unwrap_line_number();
+    let ten = XFL::new(0, 10).unwrap_line_number();
+
+    if four.root(2).unwrap_line_number() != two {
+        rollback(b"four.root(2)", line!().into());
+    }
+    if hundred.root(2).unwrap_line_number() != ten {
+        rollback(b"hundred.root(2)", line!().into());
+    }
+
+    // log (base 10)
+    if ten.log().unwrap_line_number() != XFL::one() {
+        rollback(b"two.log()", line!().into());
+    }
+
+    let thousand = XFL::new(0, 1000).unwrap_line_number();
+
+    if thousand.log().unwrap_line_number() != XFL::new(0, 3).unwrap_line_number() {
+        rollback(b"thousand.log()", line!().into());
+    }
+
     // Accept all
     accept(b"", 0);
 }
