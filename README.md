@@ -215,7 +215,7 @@ Slot
 - [x] `slot_size`
 - [x] `slot_subarray`
 - [x] `slot_subfield`
-- [ ] `slot_type`
+- [x] `slot_type`
 - [ ] `xpop_slot`
 - [x] `slot_float`
 

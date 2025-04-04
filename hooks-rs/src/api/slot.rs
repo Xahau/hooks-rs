@@ -1,6 +1,5 @@
 use core::mem::MaybeUninit;
 
-use crate::api;
 use crate::c;
 
 use super::*;
@@ -71,25 +70,23 @@ pub fn slot_subfield(parent_slot: u32, field_id: FieldId, new_slot: u32) -> Resu
 
 /// Retrieve the field code of an object in a slot and, optionally, some other information
 #[inline(always)]
-pub fn slot_type(slot_no: u32, flags: SlotTypeFlags) -> Result<FieldOrXrpAmount> {
+pub fn slot_type(slot_no: u32, flags: SlotTypeFlags) -> Result<FieldOrXahAmount> {
     match flags {
         SlotTypeFlags::Field => {
             let res = unsafe { c::slot_type(slot_no, 0) };
 
             match res {
-                res if res >= 0 => Ok(FieldOrXrpAmount::Field(unsafe {
-                    core::mem::transmute::<u32, api::FieldId>(res as u32)
-                })),
+                res if res >= 0 => Ok(FieldOrXahAmount::Field((res as u32).into())),
                 _ => Err(Error::from_code(res as _)),
             }
         }
 
-        SlotTypeFlags::XrpAmount => {
+        SlotTypeFlags::STIAmount => {
             let res = unsafe { c::slot_type(slot_no, 1) };
 
             match res {
-                1 => Ok(FieldOrXrpAmount::XrpAmount),
-                res if res >= 0 => Ok(FieldOrXrpAmount::NonXrpAmount),
+                1 => Ok(FieldOrXahAmount::XahAmount),
+                res if res >= 0 => Ok(FieldOrXahAmount::NonXahAmount),
                 _ => Err(Error::from_code(res as _)),
             }
         }
